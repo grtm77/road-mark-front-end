@@ -6,11 +6,11 @@ const gotoPage = (key: string, keyPath: string[]) => {
   console.log(key)
   switch (key){
     case '1-1': {
-      router.push('/map')
+      router.push('/addSensor')
       return
     }
     case '1-2': {
-      router.push('/2')
+      router.push('/addGateway')
       return
     }
   }
@@ -85,7 +85,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   left: 0;
   height: 100%;
   padding-top: 60px;
-  width: 15vi;
+  width: 10vi;
   z-index: 99;
 }
 .el-main {
@@ -93,7 +93,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   text-align: center;
   position: absolute;
   top: 60px; /* 考虑 header 的高度 */
-  left: 15vi; /* 考虑 aside 的宽度 */
+  left: 10vi; /* 考虑 aside 的宽度 */
   right: 0;
   bottom: 0;
   font-size: 40px;

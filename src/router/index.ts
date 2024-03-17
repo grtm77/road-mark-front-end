@@ -10,12 +10,15 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layout/index.vue'),
-      redirect: '/map',
+      redirect: '/addSensor',
       children: [
         {
-          path: '/map',
-          name: 'All',
-          component: () => import('@/views/map.vue')
+          path: '/addSensor',
+          component: () => import('@/views/addSensor.vue')
+        },
+        {
+          path: '/addGateway',
+          component: () => import('@/views/addGateway.vue')
         },
       ]
     }
