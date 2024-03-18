@@ -85,7 +85,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   left: 0;
   height: 100%;
   padding-top: 60px;
-  width: 10vi;
+  width: 15vi;
   z-index: 99;
 }
 .el-main {
@@ -93,7 +93,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   text-align: center;
   position: absolute;
   top: 60px; /* 考虑 header 的高度 */
-  left: 10vi; /* 考虑 aside 的宽度 */
+  left: 15vi; /* 考虑 aside 的宽度 */
   right: 0;
   bottom: 0;
   font-size: 40px;
