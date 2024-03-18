@@ -1,21 +1,19 @@
 <script setup lang="ts">
-
 import router from "@/router";
 
 const gotoPage = (key: string, keyPath: string[]) => {
-  console.log(key)
-  switch (key){
-    case '1-1': {
-      router.push('/addSensor')
-      return
+  console.log(key);
+  switch (key) {
+    case "1-1": {
+      router.push("/addSensor");
+      return;
     }
-    case '1-2': {
-      router.push('/addGateway')
-      return
+    case "1-2": {
+      router.push("/addGateway");
+      return;
     }
   }
-}
-
+};
 </script>
 
 <template>
@@ -29,9 +27,9 @@ const gotoPage = (key: string, keyPath: string[]) => {
               <template #title>
                 <el-icon><Location /></el-icon>新建标记
               </template>
-                <el-menu-item index="1-1">标记车位</el-menu-item>
-                <el-menu-item index="1-2">标记电杆</el-menu-item>
-                <el-menu-item index="1-3">标记路口</el-menu-item>
+              <el-menu-item index="1-1">标记车位</el-menu-item>
+              <el-menu-item index="1-2">标记电杆</el-menu-item>
+              <el-menu-item index="1-3">标记路口</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="2">
               <template #title>
