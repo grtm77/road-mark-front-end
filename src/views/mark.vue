@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import BaiduMap from "@/components/baiduMap.vue";
+import { addMarksApi } from "@/api/markApi";
+import { ElMessage } from "element-plus";
 
 // 子组件实例
 interface MapRef {
@@ -14,6 +16,7 @@ interface MapRef {
   getDistance: (start: number[], end: number[]) => number;
   clear: () => void;
 }
+
 const mapRef = ref<MapRef | null>(null);
 
 // 标记用变量
@@ -38,7 +41,7 @@ const sensorInterval = ref(5);
 const gatewayInterval = ref(15);
 
 // 选择器变量
-const typeSelected = ref("");
+const typeSelected = ref("sensors");
 const options = [
   {
     value: "sensors",
@@ -60,28 +63,41 @@ const options = [
     value: "gateway",
     label: "灯杆-单个",
   },
-  {
-    value: "None",
-    label: "不标记",
-  },
+  // {
+  //   value: "None",
+  //   label: "不标记",
+  // },
 ];
 
 // 子组件点击地图时触发标注事件
 function addMark(point: any) {
-  pointArr.value.push(point);
-  mapRef.value?.addMarkOnMap(
-    "",
-    [16, 16],
-    [pointArr.value[0].lng, pointArr.value[0].lat],
-  );
-  // 如果点个数大于1
-  if (pointArr.value.length > 1) {
-    // console.log(pointArr.value)
+  let flag = 9;
+  if (typeSelected.value === "crossing") {
+    allCrossings.value.push([point.lng, point.lat]);
+  } else if (typeSelected.value === "sensor") {
+    allSensors.value.push([[point.lng, point.lat]]);
+  } else if (typeSelected.value === "gateway") {
+    allGateways.value.push([[point.lng, point.lat]]);
+  } else if (
+    typeSelected.value === "sensors" ||
+    typeSelected.value === "gateways"
+  ) {
+    pointArr.value.push(point);
+    flag = 1;
     mapRef.value?.addMarkOnMap(
       "",
       [16, 16],
-      [pointArr.value[1].lng, pointArr.value[1].lat],
+      [pointArr.value[0].lng, pointArr.value[0].lat],
     );
+  }
+  // 如果点个数大于1
+  if (pointArr.value.length > 1) {
+    // console.log(pointArr.value)
+    // mapRef.value?.addMarkOnMap(
+    //     "",
+    //     [16, 16],
+    //     [pointArr.value[1].lng, pointArr.value[1].lat],
+    // );
     const x1 = pointArr.value[0].lng;
     const y1 = pointArr.value[0].lat;
     const x2 = pointArr.value[1].lng;
@@ -108,19 +124,6 @@ function addMark(point: any) {
         allSensors.value.push(pts.value);
         pts.value = [];
         // console.log(allSensors.value)
-
-        // 清除图上标记
-        mapRef.value?.clear();
-        // 在地图上标注这些点
-        for (let j = 0; j < allSensors.value.length; j++) {
-          for (let k = 0; k < allSensors.value[j].length; k++) {
-            mapRef.value?.addMarkOnMap(
-              SENSOR,
-              [16, 16],
-              [allSensors.value[j][k][0], allSensors.value[j][k][1]],
-            );
-          }
-        }
       } else if (typeSelected.value === "gateways") {
         //利用相似三角形求出所有点的坐标
         for (
@@ -138,21 +141,43 @@ function addMark(point: any) {
         allGateways.value.push(pts.value);
         pts.value = [];
         // console.log(allSensors.value);
-
-        // 清除图上标记
-        mapRef.value?.clear();
-        // 在地图上标注这些点
-        for (let j = 0; j < allGateways.value.length; j++) {
-          for (let k = 0; k < allGateways.value[j].length; k++) {
-            mapRef.value?.addMarkOnMap(
-              GATEWAY,
-              [32, 32],
-              [allGateways.value[j][k][0], allGateways.value[j][k][1]],
-              [0, -16],
-            );
-          }
-        }
       }
+    }
+    flag = 2;
+  }
+  if (flag !== 1) {
+    // 清除图上标记
+    mapRef.value?.clear();
+    // 在地图上标注这些点
+    // 传感器
+    for (let j = 0; j < allSensors.value.length; j++) {
+      for (let k = 0; k < allSensors.value[j].length; k++) {
+        mapRef.value?.addMarkOnMap(
+          SENSOR,
+          [16, 16],
+          [allSensors.value[j][k][0], allSensors.value[j][k][1]],
+        );
+      }
+    }
+    // 网关
+    for (let j = 0; j < allGateways.value.length; j++) {
+      for (let k = 0; k < allGateways.value[j].length; k++) {
+        mapRef.value?.addMarkOnMap(
+          GATEWAY,
+          [32, 32],
+          [allGateways.value[j][k][0], allGateways.value[j][k][1]],
+          [0, -16],
+        );
+      }
+    }
+    // 路口
+    for (let j = 0; j < allCrossings.value.length; j++) {
+      mapRef.value?.addMarkOnMap(
+        CROSSING,
+        [32, 32],
+        [allCrossings.value[j][0], allCrossings.value[j][1]],
+        [0, -16],
+      );
     }
   }
 }
@@ -166,24 +191,48 @@ function format() {
   allCrossings.value = [];
   mapRef.value?.clear();
 }
+
+async function sendData() {
+  try {
+    const { data } = await addMarksApi(
+      allSensors.value,
+      allGateways.value,
+      allCrossings.value,
+    );
+    if (data.success === true) {
+      ElMessage({
+        type: "success",
+        message: "成功",
+      });
+      format();
+    } else {
+      ElMessage({
+        type: "error",
+        message: data.msg,
+      });
+    }
+  } catch (error: any) {
+    ElMessage({
+      type: "error",
+      message: error.message,
+    });
+  }
+}
 </script>
 
 <template>
   <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
   <baidu-map ref="mapRef" @add-mark="addMark"></baidu-map>
   <div class="func-area">
-    <el-select
-      v-model="typeSelected"
-      placeholder="请选择标记节点类型"
-      style="width: 240px"
-    >
+    节点类型:
+    <el-select v-model="typeSelected" style="width: 120px">
       <el-option
         v-for="item in options"
         :label="item.label"
         :value="item.value"
       />
     </el-select>
-    <span v-if="typeSelected === 'sensors'">
+    <span class="typeS" v-if="typeSelected === 'sensors'">
       车位间距:
       <el-input-number v-model="sensorInterval" :min="2" :max="10" />
     </span>
@@ -192,6 +241,7 @@ function format() {
       <el-input-number v-model="gatewayInterval" :min="10" :max="40" />
     </span>
     <el-button @click="format()">清空</el-button>
+    <el-button @click="sendData()">保存数据</el-button>
   </div>
 </template>
 
@@ -203,7 +253,14 @@ function format() {
   margin-top: 10px;
   font-size: 20px;
 }
+
 .func-area > * {
   margin-right: 10px;
+}
+
+.func-area .typeS {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

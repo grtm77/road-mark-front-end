@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { BaiduMap } from "vue-baidu-map-3x";
-import { defineProps, defineEmits } from "vue";
 
 // 显示当前标注内容
 // defineProps<{
