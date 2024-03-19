@@ -5,7 +5,12 @@ import BaiduMap from "@/components/baiduMap.vue";
 // 子组件实例
 interface MapRef {
   hw: () => void;
-  addMarkOnMap: (url: string, size: number[], position: number[]) => void;
+  addMarkOnMap: (
+    url: string,
+    size: number[],
+    position: number[],
+    offset?: number[],
+  ) => void;
   getDistance: (start: number[], end: number[]) => number;
   clear: () => void;
 }
@@ -62,14 +67,14 @@ const options = [
 ];
 
 // 子组件点击地图时触发标注事件
-function addMark(point: any, type: string) {
+function addMark(point: any) {
   pointArr.value.push(point);
   mapRef.value?.addMarkOnMap(
     "",
     [16, 16],
     [pointArr.value[0].lng, pointArr.value[0].lat],
   );
-  // // 如果点个数大于1
+  // 如果点个数大于1
   if (pointArr.value.length > 1) {
     // console.log(pointArr.value)
     mapRef.value?.addMarkOnMap(
@@ -85,30 +90,68 @@ function addMark(point: any, type: string) {
     let chang = mapRef.value?.getDistance([x1, y1], [x2, y2]);
     // console.log(chang)
     if (chang) {
-      //利用相似三角形求出所有点的坐标
-      for (let i = sensorInterval.value; i < chang; i += sensorInterval.value) {
-        let x3 = (i / chang) * (x1 - x2) + x2;
-        x3 = x3.toFixed(8);
-        let y3 = (i / chang) * (y1 - y2) + y2;
-        y3 = y3.toFixed(8);
-        pts.value.push([x3, y3]);
-      }
-    }
+      // 识别节点种类
+      if (typeSelected.value === "sensors") {
+        //利用相似三角形求出所有点的坐标
+        for (
+          let i = sensorInterval.value;
+          i < chang;
+          i += sensorInterval.value
+        ) {
+          let x3 = (i / chang) * (x1 - x2) + x2;
+          x3 = x3.toFixed(8);
+          let y3 = (i / chang) * (y1 - y2) + y2;
+          y3 = y3.toFixed(8);
+          pts.value.push([x3, y3]);
+        }
+        //二维数组，存放多条街道的坐标点
+        allSensors.value.push(pts.value);
+        pts.value = [];
+        // console.log(allSensors.value)
 
-    //二维数组，存放多条街道的坐标点
-    allSensors.value.push(pts.value);
-    console.log(allSensors.value);
+        // 清除图上标记
+        mapRef.value?.clear();
+        // 在地图上标注这些点
+        for (let j = 0; j < allSensors.value.length; j++) {
+          for (let k = 0; k < allSensors.value[j].length; k++) {
+            mapRef.value?.addMarkOnMap(
+              SENSOR,
+              [16, 16],
+              [allSensors.value[j][k][0], allSensors.value[j][k][1]],
+            );
+          }
+        }
+      } else if (typeSelected.value === "gateways") {
+        //利用相似三角形求出所有点的坐标
+        for (
+          let i = gatewayInterval.value;
+          i < chang;
+          i += gatewayInterval.value
+        ) {
+          let x3 = (i / chang) * (x1 - x2) + x2;
+          x3 = x3.toFixed(8);
+          let y3 = (i / chang) * (y1 - y2) + y2;
+          y3 = y3.toFixed(8);
+          pts.value.push([x3, y3]);
+        }
+        //二维数组，存放多条街道的坐标点
+        allGateways.value.push(pts.value);
+        pts.value = [];
+        // console.log(allSensors.value);
 
-    // 清除图上标记
-    mapRef.value?.clear();
-    // 在地图上标注这些点
-    for (let j = 0; j < allSensors.value.length; j++) {
-      for (let k = 0; k < allSensors.value[j].length; k++) {
-        mapRef.value?.addMarkOnMap(
-          SENSOR,
-          [16, 16],
-          [allSensors.value[j][k][0], allSensors.value[j][k][1]],
-        );
+        // 清除图上标记
+        mapRef.value?.clear();
+        // 在地图上标注这些点
+        for (let j = 0; j < allGateways.value.length; j++) {
+          for (let k = 0; k < allGateways.value[j].length; k++) {
+            mapRef.value?.addMarkOnMap(
+              GATEWAY,
+              [32, 32],
+              [allGateways.value[j][k][0], allGateways.value[j][k][1]],
+              [0, -16],
+            );
+          }
+        }
       }
     }
   }
