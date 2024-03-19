@@ -5,7 +5,12 @@ import BaiduMap from "@/components/baiduMap.vue";
 // 子组件实例
 interface MapRef {
   hw: () => void;
-  addMarkOnMap: (url: string, size: number[], position: number[]) => void;
+  addMarkOnMap: (
+    url: string,
+    size: number[],
+    position: number[],
+    offset?: number[],
+  ) => void;
   getDistance: (start: number[], end: number[]) => number;
   clear: () => void;
 }
@@ -71,6 +76,7 @@ function addMark(point: any) {
           GATEWAY,
           [32, 32],
           [all.value[j][k][0], all.value[j][k][1]],
+          [0, -16],
         );
       }
     }
@@ -80,7 +86,7 @@ function addMark(point: any) {
 
 <template>
   <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
-  <baidu-map ref="mapRef" @add-mark="addMark"></baidu-map>
+  <baidu-map ref="mapRef" noti-text="电杆" @add-mark="addMark"></baidu-map>
 </template>
 
 <style></style>

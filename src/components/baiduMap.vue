@@ -3,6 +3,11 @@ import { ref } from "vue";
 import { BaiduMap } from "vue-baidu-map-3x";
 import { defineProps, defineEmits } from "vue";
 
+// 显示当前标注内容
+defineProps<{
+  notiText?: string;
+}>();
+
 // 设置地图风格
 const mapStyle = ref({
   styleJson: [
@@ -60,16 +65,23 @@ function ready({ BMap: BMapInstance, map: mapInstance }: any) {
 }
 
 // 新增单个标记点
-function addMarkOnMap(url: string, size: number[], position: number[]) {
+function addMarkOnMap(
+  url: string,
+  size: number[],
+  position: number[],
+  offset: number[] = [0, 0],
+) {
   let myIcon;
   if (url === "") {
     myIcon = null;
   } else {
     myIcon = new BMap.Icon(url, new BMap.Size(size[0], size[1]));
   }
+  let offset1 = new BMap.Size(offset[0], offset[1]);
   let point = new BMap.Point(position[0], position[1]);
   let marker = new BMap.Marker(point, {
     icon: myIcon,
+    offset: offset1,
   });
   map.addOverlay(marker);
 }
@@ -111,6 +123,7 @@ defineExpose({
 </script>
 
 <template>
+  <div class="notification">现在进行{{ notiText }}标注</div>
   <baidu-map
     class="bm-view"
     :center="{ lng: 113.80848202641658, lat: 22.816506505348503 }"
@@ -156,5 +169,16 @@ defineExpose({
 .bm-view {
   width: 100%;
   height: 90%;
+}
+.notification {
+  position: absolute;
+  top: 10px; /* 调整位置 */
+  left: 20px; /* 调整位置 */
+  background-color: rgba(182, 182, 182, 0.8);
+  padding: 5px;
+  border-radius: 20px;
+  font-size: 40px;
+  z-index: 50;
+  font-weight: bold;
 }
 </style>

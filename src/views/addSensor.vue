@@ -81,7 +81,7 @@ function addMark(point: any) {
 
 <template>
   <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
-  <baidu-map ref="mapRef" @add-mark="addMark"></baidu-map>
+  <baidu-map ref="mapRef" noti-text="车位" @add-mark="addMark"></baidu-map>
 </template>
 
 <style></style>
