@@ -4,9 +4,9 @@ import { BaiduMap } from "vue-baidu-map-3x";
 import { defineProps, defineEmits } from "vue";
 
 // 显示当前标注内容
-defineProps<{
-  notiText?: string;
-}>();
+// defineProps<{
+//   notiText?: string;
+// }>();
 
 // 设置地图风格
 const mapStyle = ref({
@@ -123,7 +123,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="notification">现在进行{{ notiText }}标注</div>
+  <!--  <div class="notification">现在进行{{ notiText }}标注</div>-->
   <baidu-map
     class="bm-view"
     :center="{ lng: 113.80848202641658, lat: 22.816506505348503 }"
@@ -136,49 +136,21 @@ defineExpose({
     @click="mapClick"
   >
     <bm-scale anchor="BMAP_ANCHOR_BOTTOM_LEFT"></bm-scale>
-    <!--    <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>-->
+    <bm-map-type
+      :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']"
+      anchor="BMAP_ANCHOR_TOP_LEFT"
+    ></bm-map-type>
     <bm-geolocation
       anchor="BMAP_ANCHOR_BOTTOM_RIGHT"
       :showAddressBar="false"
     ></bm-geolocation>
     <!--    <bm-marker :position="{lng: 113.80848202641658, lat: 22.816506505348503}" :dragging="false" :icon=sIcon></bm-marker>-->
   </baidu-map>
-  <el-button
-    @click="
-      addMarkOnMap(SENSOR, [16, 16], [113.80848202641658, 22.816506505348503])
-    "
-    >传感器</el-button
-  >
-  <el-button
-    @click="
-      addMarkOnMap(GATEWAY, [32, 32], [113.80868202641658, 22.816506505348503])
-    "
-    >网关</el-button
-  >
-  <el-button
-    @click="
-      addMarkOnMap(CROSSING, [32, 32], [113.80848202641658, 22.816906505348503])
-    "
-    >路口</el-button
-  >
-  <!--  <el-button @click="callParent()">向父组件发送事件</el-button>-->
-  <el-button @click="map.clearOverlays()">清空</el-button>
 </template>
 
 <style scoped>
 .bm-view {
   width: 100%;
   height: 90%;
-}
-.notification {
-  position: absolute;
-  top: 10px; /* 调整位置 */
-  left: 20px; /* 调整位置 */
-  background-color: rgba(182, 182, 182, 0.8);
-  padding: 5px;
-  border-radius: 20px;
-  font-size: 40px;
-  z-index: 50;
-  font-weight: bold;
 }
 </style>

@@ -24,8 +24,6 @@ const all = ref([] as any); //存放地图上所有标记的节点
 
 // 网关图标
 const GATEWAY = "src/components/icons/jian.png";
-// 路口图标
-const CROSSING = "src/components/icons/green.png";
 
 // 子组件点击地图时触发标注事件
 function addMark(point: any) {

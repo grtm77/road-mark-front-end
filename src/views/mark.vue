@@ -1,0 +1,166 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import BaiduMap from "@/components/baiduMap.vue";
+
+// 子组件实例
+interface MapRef {
+  hw: () => void;
+  addMarkOnMap: (url: string, size: number[], position: number[]) => void;
+  getDistance: (start: number[], end: number[]) => number;
+  clear: () => void;
+}
+const mapRef = ref<MapRef | null>(null);
+
+// 标记用变量
+const pointArr = ref([] as any); //存放一条路的起点与终点
+const pts = ref([] as any); //存放一条路所有的传感器节点
+const allSensors = ref([] as any); //存放地图上所有标记的传感器节点
+const allGateways = ref([] as any); //存放地图上所有标记的网关节点
+const allCrossings = ref([] as any); //存放地图上所有标记的路口节点
+
+// 传感器图标
+const SENSOR = "src/components/icons/point.png";
+// 车位图标
+// const PARK = 'src/components/icons/parkingspace.png'
+// const SIZE2 = [32, 48]
+// 网关图标
+const GATEWAY = "src/components/icons/jian.png";
+// 路口图标
+const CROSSING = "src/components/icons/green.png";
+
+// 间距
+const sensorInterval = ref(5);
+const gatewayInterval = ref(15);
+
+// 选择器变量
+const typeSelected = ref("");
+const options = [
+  {
+    value: "sensors",
+    label: "车位-序列",
+  },
+  {
+    value: "gateways",
+    label: "灯杆-序列",
+  },
+  {
+    value: "crossing",
+    label: "路口",
+  },
+  {
+    value: "sensor",
+    label: "车位-单个",
+  },
+  {
+    value: "gateway",
+    label: "灯杆-单个",
+  },
+  {
+    value: "None",
+    label: "不标记",
+  },
+];
+
+// 子组件点击地图时触发标注事件
+function addMark(point: any, type: string) {
+  pointArr.value.push(point);
+  mapRef.value?.addMarkOnMap(
+    "",
+    [16, 16],
+    [pointArr.value[0].lng, pointArr.value[0].lat],
+  );
+  // // 如果点个数大于1
+  if (pointArr.value.length > 1) {
+    // console.log(pointArr.value)
+    mapRef.value?.addMarkOnMap(
+      "",
+      [16, 16],
+      [pointArr.value[1].lng, pointArr.value[1].lat],
+    );
+    const x1 = pointArr.value[0].lng;
+    const y1 = pointArr.value[0].lat;
+    const x2 = pointArr.value[1].lng;
+    const y2 = pointArr.value[1].lat;
+    pointArr.value = [];
+    let chang = mapRef.value?.getDistance([x1, y1], [x2, y2]);
+    // console.log(chang)
+    if (chang) {
+      //利用相似三角形求出所有点的坐标
+      for (let i = sensorInterval.value; i < chang; i += sensorInterval.value) {
+        let x3 = (i / chang) * (x1 - x2) + x2;
+        x3 = x3.toFixed(8);
+        let y3 = (i / chang) * (y1 - y2) + y2;
+        y3 = y3.toFixed(8);
+        pts.value.push([x3, y3]);
+      }
+    }
+
+    //二维数组，存放多条街道的坐标点
+    allSensors.value.push(pts.value);
+    console.log(allSensors.value);
+
+    // 清除图上标记
+    mapRef.value?.clear();
+    // 在地图上标注这些点
+    for (let j = 0; j < allSensors.value.length; j++) {
+      for (let k = 0; k < allSensors.value[j].length; k++) {
+        mapRef.value?.addMarkOnMap(
+          SENSOR,
+          [16, 16],
+          [allSensors.value[j][k][0], allSensors.value[j][k][1]],
+        );
+      }
+    }
+  }
+}
+
+// 格式化标记点
+function format() {
+  pointArr.value = [];
+  pts.value = [];
+  allSensors.value = [];
+  allGateways.value = [];
+  allCrossings.value = [];
+  mapRef.value?.clear();
+}
+</script>
+
+<template>
+  <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
+  <baidu-map ref="mapRef" @add-mark="addMark"></baidu-map>
+  <div class="func-area">
+    <el-select
+      v-model="typeSelected"
+      placeholder="请选择标记节点类型"
+      style="width: 240px"
+    >
+      <el-option
+        v-for="item in options"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <span v-if="typeSelected === 'sensors'">
+      车位间距:
+      <el-input-number v-model="sensorInterval" :min="2" :max="10" />
+    </span>
+    <span v-if="typeSelected === 'gateways'">
+      灯杆间距:
+      <el-input-number v-model="gatewayInterval" :min="10" :max="40" />
+    </span>
+    <el-button @click="format()">清空</el-button>
+  </div>
+</template>
+
+<style>
+.func-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 20px;
+}
+.func-area > * {
+  margin-right: 10px;
+}
+</style>

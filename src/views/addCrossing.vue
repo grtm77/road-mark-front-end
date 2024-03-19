@@ -17,11 +17,8 @@ const pts = ref([] as any); //存放一条路所有的传感器节点
 const pointIndex = ref(0); //初始化节点之间的距离
 const all = ref([] as any); //存放地图上所有标记的节点
 
-// 传感器图标
-const SENSOR = "src/components/icons/point.png";
-// 车位图标
-// const PARK = 'src/components/icons/parkingspace.png'
-// const SIZE2 = [32, 48]
+// 路口图标
+const CROSSING = "src/components/icons/green.png";
 
 // 子组件点击地图时触发标注事件
 function addMark(point: any) {
@@ -69,7 +66,7 @@ function addMark(point: any) {
     for (let j = 0; j < all.value.length; j++) {
       for (let k = 0; k < all.value[j].length; k++) {
         mapRef.value?.addMarkOnMap(
-          SENSOR,
+          CROSSING,
           [16, 16],
           [all.value[j][k][0], all.value[j][k][1]],
         );
@@ -81,7 +78,7 @@ function addMark(point: any) {
 
 <template>
   <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
-  <baidu-map ref="mapRef" noti-text="车位" @add-mark="addMark"></baidu-map>
+  <baidu-map ref="mapRef" noti-text="路口" @add-mark="addMark"></baidu-map>
 </template>
 
 <style></style>

@@ -10,15 +10,19 @@ const router = createRouter({
     {
       path: "/",
       component: () => import("@/layout/index.vue"),
-      redirect: "/addSensor",
+      redirect: "/mark",
       children: [
         {
-          path: "/addSensor",
-          component: () => import("@/views/addSensor.vue"),
+          path: "/mark",
+          component: () => import("@/views/mark.vue"),
         },
         {
           path: "/addGateway",
           component: () => import("@/views/addGateway.vue"),
+        },
+        {
+          path: "/addCrossing",
+          component: () => import("@/views/addCrossing.vue"),
         },
       ],
     },
