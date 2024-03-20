@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import BaiduMap from "@/components/baiduMap.vue";
 import { addMarksApi } from "@/api/markApi";
 import { ElMessage } from "element-plus";
@@ -222,6 +222,13 @@ async function sendData() {
 
 <template>
   <!--  <div class="bm-view" style="background-color:#c51313;"></div>-->
+  <div class="notification">
+    车位:
+    {{ allSensors.reduce((total: any, arr: any) => total + arr.length, 0) }}个
+    灯杆:
+    {{ allGateways.reduce((total: any, arr: any) => total + arr.length, 0) }}个
+    路口: {{ allCrossings.length }}个
+  </div>
   <baidu-map ref="mapRef" @add-mark="addMark"></baidu-map>
   <div class="func-area">
     节点类型:
@@ -262,5 +269,16 @@ async function sendData() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.notification {
+  position: absolute;
+  top: 10px; /* 调整位置 */
+  left: 100px; /* 调整位置 */
+  background-color: rgba(182, 182, 182, 0.8);
+  padding: 5px;
+  border-radius: 20px;
+  font-size: 30px;
+  z-index: 50;
+  font-weight: bold;
 }
 </style>
