@@ -92,7 +92,7 @@ function getDistance(start: number[], end: number[]) {
       new BMap.Point(start[0], start[1]),
       new BMap.Point(end[0], end[1]),
     )
-    .toFixed(4);
+    .toFixed(10);
 }
 
 // 清除标记

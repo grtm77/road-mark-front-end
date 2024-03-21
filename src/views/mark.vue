@@ -73,11 +73,18 @@ const options = [
 function addMark(point: any) {
   let flag = 9;
   if (typeSelected.value === "crossing") {
-    allCrossings.value.push({ lng: point.lng, lat: point.lat });
+    allCrossings.value.push({
+      lng: point.lng.toString(),
+      lat: point.lat.toString(),
+    });
   } else if (typeSelected.value === "sensor") {
-    allSensors.value.push([{ lng: point.lng, lat: point.lat }]);
+    allSensors.value.push([
+      { lng: point.lng.toString(), lat: point.lat.toString() },
+    ]);
   } else if (typeSelected.value === "gateway") {
-    allGateways.value.push([{ lng: point.lng, lat: point.lat }]);
+    allGateways.value.push([
+      { lng: point.lng.toString(), lat: point.lat.toString() },
+    ]);
   } else if (
     typeSelected.value === "sensors" ||
     typeSelected.value === "gateways"
@@ -115,9 +122,9 @@ function addMark(point: any) {
           i += sensorInterval.value
         ) {
           let x3 = (i / chang) * (x1 - x2) + x2;
-          x3 = x3.toFixed(8);
+          x3 = x3.toFixed(14);
           let y3 = (i / chang) * (y1 - y2) + y2;
-          y3 = y3.toFixed(8);
+          y3 = y3.toFixed(14);
           pts.value.push({ lng: x3, lat: y3 });
         }
         //二维数组，存放多条街道的坐标点
@@ -132,9 +139,9 @@ function addMark(point: any) {
           i += gatewayInterval.value
         ) {
           let x3 = (i / chang) * (x1 - x2) + x2;
-          x3 = x3.toFixed(8);
+          x3 = x3.toFixed(14);
           let y3 = (i / chang) * (y1 - y2) + y2;
-          y3 = y3.toFixed(8);
+          y3 = y3.toFixed(14);
           pts.value.push({ lng: x3, lat: y3 });
         }
         //二维数组，存放多条街道的坐标点
