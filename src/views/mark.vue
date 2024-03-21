@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import BaiduMap from "@/components/baiduMap.vue";
 import { addMarksApi } from "@/api/markApi";
 import { ElMessage } from "element-plus";
@@ -73,11 +73,11 @@ const options = [
 function addMark(point: any) {
   let flag = 9;
   if (typeSelected.value === "crossing") {
-    allCrossings.value.push([point.lng, point.lat]);
+    allCrossings.value.push({ lng: point.lng, lat: point.lat });
   } else if (typeSelected.value === "sensor") {
-    allSensors.value.push([[point.lng, point.lat]]);
+    allSensors.value.push([{ lng: point.lng, lat: point.lat }]);
   } else if (typeSelected.value === "gateway") {
-    allGateways.value.push([[point.lng, point.lat]]);
+    allGateways.value.push([{ lng: point.lng, lat: point.lat }]);
   } else if (
     typeSelected.value === "sensors" ||
     typeSelected.value === "gateways"
@@ -118,7 +118,7 @@ function addMark(point: any) {
           x3 = x3.toFixed(8);
           let y3 = (i / chang) * (y1 - y2) + y2;
           y3 = y3.toFixed(8);
-          pts.value.push([x3, y3]);
+          pts.value.push({ lng: x3, lat: y3 });
         }
         //二维数组，存放多条街道的坐标点
         allSensors.value.push(pts.value);
@@ -135,7 +135,7 @@ function addMark(point: any) {
           x3 = x3.toFixed(8);
           let y3 = (i / chang) * (y1 - y2) + y2;
           y3 = y3.toFixed(8);
-          pts.value.push([x3, y3]);
+          pts.value.push({ lng: x3, lat: y3 });
         }
         //二维数组，存放多条街道的坐标点
         allGateways.value.push(pts.value);
@@ -155,7 +155,7 @@ function addMark(point: any) {
         mapRef.value?.addMarkOnMap(
           SENSOR,
           [16, 16],
-          [allSensors.value[j][k][0], allSensors.value[j][k][1]],
+          [allSensors.value[j][k].lng, allSensors.value[j][k].lat],
         );
       }
     }
@@ -165,7 +165,7 @@ function addMark(point: any) {
         mapRef.value?.addMarkOnMap(
           GATEWAY,
           [32, 32],
-          [allGateways.value[j][k][0], allGateways.value[j][k][1]],
+          [allGateways.value[j][k].lng, allGateways.value[j][k].lat],
           [0, -16],
         );
       }
@@ -175,7 +175,7 @@ function addMark(point: any) {
       mapRef.value?.addMarkOnMap(
         CROSSING,
         [32, 32],
-        [allCrossings.value[j][0], allCrossings.value[j][1]],
+        [allCrossings.value[j].lng, allCrossings.value[j].lat],
         [0, -16],
       );
     }
