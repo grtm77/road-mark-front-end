@@ -45,9 +45,9 @@ const gotoPage = (key: string, keyPath: string[]) => {
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
-                <el-icon><GoldMedal /></el-icon>数据选择
+                <el-icon><GoldMedal /></el-icon>数据查看
               </template>
-              <el-menu-item index="3-1">标记数据</el-menu-item>
+              <el-menu-item index="3-1">默认数据</el-menu-item>
               <el-menu-item index="3-2">测试数据集1</el-menu-item>
               <el-menu-item index="3-3">测试数据集2</el-menu-item>
               <el-menu-item index="2-4">测试数据集3</el-menu-item>
