@@ -6,7 +6,6 @@ import { ElMessage } from "element-plus";
 
 // 子组件实例
 interface MapRef {
-  hw: () => void;
   addMarkOnMap: (
     url: string,
     size: number[],

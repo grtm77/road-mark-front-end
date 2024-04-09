@@ -39,16 +39,8 @@ const mapType = ref("");
 let BMap: any = null; // 保存 BMap 对象的全局变量
 let map: any = null; // 保存 map 对象的全局变量
 
-// 地图标记点图标
-// 网关图标
-const GATEWAY = "src/components/icons/jian.png";
-// 传感器图标
-const SENSOR = "src/components/icons/point.png";
-// 车位图标
-// const PARK = 'src/components/icons/parkingspace.png'
-// const SIZE2 = [32, 48]
-// 路口图标
-const CROSSING = "src/components/icons/green.png";
+// 向父组件传递事件
+const emit = defineEmits(["addMark", "mapReady"]);
 
 // 地图加载完成，拿到地图对象
 function ready({ BMap: BMapInstance, map: mapInstance }: any) {
@@ -61,6 +53,8 @@ function ready({ BMap: BMapInstance, map: mapInstance }: any) {
     maxZoom: 18,
   });
   // map.setMapType(mapType);
+  console.log("Map ready!");
+  emit("mapReady");
 }
 
 // 新增单个标记点
@@ -100,13 +94,6 @@ function clear() {
   map.clearOverlays();
 }
 
-// 向父组件传递事件
-const emit = defineEmits(["addMark"]);
-
-function hw() {
-  console.log("Yes");
-}
-
 // 地图点击事件,传递给父组件
 function mapClick({ point }: any) {
   emit("addMark", point);
@@ -114,7 +101,6 @@ function mapClick({ point }: any) {
 
 // 向外暴露方法
 defineExpose({
-  hw,
   addMarkOnMap,
   getDistance,
   clear,

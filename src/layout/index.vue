@@ -1,5 +1,35 @@
 <script setup lang="ts">
 import router from "@/router";
+import { onBeforeMount, ref } from "vue";
+import { getDatasetsListApi } from "@/api/markApi";
+import { ElMessage } from "element-plus";
+
+const datasets = ref([
+  {
+    id: 1,
+    table_name: "default",
+    table_remark: "默认存储空间",
+  },
+]);
+
+onBeforeMount(async () => {
+  try {
+    const { data } = await getDatasetsListApi();
+    if (data.success === true) {
+      datasets.value = data.data;
+    } else {
+      ElMessage({
+        type: "error",
+        message: data.msg,
+      });
+    }
+  } catch (error: any) {
+    ElMessage({
+      type: "error",
+      message: error.message,
+    });
+  }
+});
 
 const gotoPage = (key: string, keyPath: string[]) => {
   // console.log(key);
@@ -29,12 +59,18 @@ const gotoPage = (key: string, keyPath: string[]) => {
           <el-menu :default-openeds="['2']" @select="gotoPage">
             <el-menu-item index="1">
               <template #title>
-                <el-icon><Location /></el-icon>新建标记
+                <el-icon>
+                  <Location />
+                </el-icon>
+                新建标记
               </template>
             </el-menu-item>
             <el-sub-menu index="2">
               <template #title>
-                <el-icon><Calendar /></el-icon>覆盖计算
+                <el-icon>
+                  <Calendar />
+                </el-icon>
+                覆盖计算
               </template>
               <el-menu-item index="2-1">朴素贪心</el-menu-item>
               <el-menu-item index="2-2">定向贪心</el-menu-item>
@@ -45,12 +81,21 @@ const gotoPage = (key: string, keyPath: string[]) => {
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
-                <el-icon><GoldMedal /></el-icon>数据查看
+                <el-icon>
+                  <GoldMedal />
+                </el-icon>
+                数据查看
               </template>
-              <el-menu-item index="3-1">默认数据</el-menu-item>
-              <el-menu-item index="3-2">测试数据集1</el-menu-item>
-              <el-menu-item index="3-3">测试数据集2</el-menu-item>
-              <el-menu-item index="2-4">测试数据集3</el-menu-item>
+              <el-menu-item
+                v-for="d in datasets"
+                @click="
+                  router.push({
+                    path: '/viewData',
+                    query: { dataset: d.table_name },
+                  })
+                "
+                >{{ d.table_remark }}</el-menu-item
+              >
             </el-sub-menu>
           </el-menu>
         </el-scrollbar>
@@ -77,6 +122,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   font-size: 25px;
   font-weight: bold;
 }
+
 .el-aside {
   //background-color: #256eb4;
   position: fixed;
@@ -87,6 +133,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
   width: 15vi;
   z-index: 99;
 }
+
 .el-main {
   color: #333;
   text-align: center;

@@ -5,9 +5,17 @@ export const addMarksApi = async (
   gateways: number[],
   crossings: number[],
 ) => {
-  return await server.put("/addMarks", {
+  return await server.post("/addMarks", {
     sensors: sensors,
     gateways: gateways,
     crossings: crossings,
   });
+};
+
+export const getDatasetsListApi = async () => {
+  return await server.get("/loadDatasets");
+};
+
+export const getDataApi = async (name: any) => {
+  return await server.get("/loadData?table_name=" + name);
 };
