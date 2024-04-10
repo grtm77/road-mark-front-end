@@ -133,14 +133,11 @@ function format() {
 </script>
 
 <template>
-  <div class="notification">
-    车位:
-    {{ allSensors.length }}个 灯杆: {{ allGateways.length }}个 路口:
-    {{ allCrossings.length }}个
-  </div>
   <baidu-map ref="mapRef2" @map-ready="mapReady"></baidu-map>
   <div class="func-area">
-    <el-button @click="format()">清空</el-button>
+      车位:
+      {{ allSensors.length }}个 灯杆: {{ allGateways.length }}个 路口:
+      {{ allCrossings.length }}个
   </div>
 </template>
 
@@ -150,7 +147,8 @@ function format() {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
-  font-size: 20px;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .func-area > * {

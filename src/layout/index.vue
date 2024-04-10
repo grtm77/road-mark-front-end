@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import router from "@/router";
-import { onBeforeMount, ref } from "vue";
-import { getDatasetsListApi } from "@/api/markApi";
-import { ElMessage } from "element-plus";
+import {onBeforeMount, ref} from "vue";
+import {calcApi, getDatasetsListApi} from "@/api/markApi";
+import {ElMessage} from "element-plus";
 
 const datasets = ref([
   {
@@ -14,7 +14,7 @@ const datasets = ref([
 
 onBeforeMount(async () => {
   try {
-    const { data } = await getDatasetsListApi();
+    const {data} = await getDatasetsListApi();
     if (data.success === true) {
       datasets.value = data.data;
     } else {
@@ -47,7 +47,40 @@ const gotoPage = (key: string, keyPath: string[]) => {
       return;
     }
   }
-};
+}
+
+// 数据集选择dialog
+const dataDialog = ref(false)
+const algorithm = ref(0)
+
+function openDialog(a: number) {
+  algorithm.value = a
+  dataDialog.value = true
+}
+
+async function askForCalc(name: string) {
+  try {
+    const {data} = await calcApi(name, algorithm.value)
+    if (data.success === true) {
+      ElMessage({
+        type: "success",
+        message: "计算成功！",
+      })
+    } else {
+      ElMessage({
+        type: "error",
+        message: data.msg,
+      })
+    }
+  } catch (error: any) {
+    ElMessage({
+      type: "error",
+      message: error.message,
+    });
+  }
+}
+
+
 </script>
 
 <template>
@@ -60,7 +93,7 @@ const gotoPage = (key: string, keyPath: string[]) => {
             <el-menu-item index="1">
               <template #title>
                 <el-icon>
-                  <Location />
+                  <Location/>
                 </el-icon>
                 新建标记
               </template>
@@ -68,43 +101,63 @@ const gotoPage = (key: string, keyPath: string[]) => {
             <el-sub-menu index="2">
               <template #title>
                 <el-icon>
-                  <Calendar />
+                  <Calendar/>
                 </el-icon>
                 覆盖计算
               </template>
-              <el-menu-item index="2-1">朴素贪心</el-menu-item>
-              <el-menu-item index="2-2">定向贪心</el-menu-item>
-              <el-menu-item index="2-3">线性规划</el-menu-item>
-              <el-menu-item index="2-4">蚁群算法</el-menu-item>
-              <el-menu-item index="2-5">遗传算法</el-menu-item>
-              <el-menu-item index="2-6">分支定界</el-menu-item>
+              <el-menu-item index="2-1" @click="openDialog(1)">朴素贪心</el-menu-item>
+              <el-menu-item index="2-2" @click="openDialog(2)">定向贪心</el-menu-item>
+              <el-menu-item index="2-3" @click="openDialog(3)">线性规划</el-menu-item>
+              <el-menu-item index="2-4" @click="openDialog(4)">蚁群算法</el-menu-item>
+              <el-menu-item index="2-5" @click="openDialog(5)">遗传算法</el-menu-item>
+              <el-menu-item index="2-6" @click="openDialog(6)">分支定界</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
                 <el-icon>
-                  <GoldMedal />
+                  <GoldMedal/>
                 </el-icon>
                 数据查看
               </template>
               <el-menu-item
-                v-for="d in datasets"
-                @click="
+                  v-for="d in datasets"
+                  @click="
                   router.push({
                     path: '/viewData',
                     query: { dataset: d.table_name },
                   })
                 "
-                >{{ d.table_remark }}</el-menu-item
+              >{{ d.table_remark }}
+              </el-menu-item
               >
             </el-sub-menu>
           </el-menu>
         </el-scrollbar>
       </el-aside>
       <el-main>
-        <RouterView />
+        <RouterView/>
       </el-main>
     </el-container>
   </el-container>
+
+  <!--  数据选择对话框-->
+  <el-dialog v-model="dataDialog" :show-close="false" width="500">
+    <template #header="{ close, titleId, titleClass }">
+      <div class="my-header">
+        <h4 :id="titleId" :class="titleClass">请选择需要使用的数据集</h4>
+        <el-button type="danger" @click="close" size="small">
+          <el-icon>
+            <CircleCloseFilled/>
+          </el-icon>
+        </el-button>
+      </div>
+    </template>
+    <el-button
+        v-for="d in datasets"
+        @click="askForCalc(d.table_name)"
+    >{{ d.table_remark }}
+    </el-button>
+  </el-dialog>
 </template>
 
 <style scoped lang="less">
@@ -145,5 +198,12 @@ const gotoPage = (key: string, keyPath: string[]) => {
   font-size: 40px;
   padding: 0;
   //background-color: #2c3e50;
+}
+
+.my-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
 }
 </style>
