@@ -94,6 +94,16 @@ function clear() {
   map.clearOverlays();
 }
 
+// 设置合适视图
+function fit(points: object[]) {
+  let arr = [];
+  for (let i = 0; i < points.length; i++) {
+    arr.push(new BMap.Point(points[i].lng, points[i].lat));
+  }
+  // console.log(arr)
+  map.setViewport(arr);
+}
+
 // 地图点击事件,传递给父组件
 function mapClick({ point }: any) {
   emit("addMark", point);
@@ -104,6 +114,7 @@ defineExpose({
   addMarkOnMap,
   getDistance,
   clear,
+  fit,
 });
 </script>
 

@@ -15,6 +15,7 @@ interface MapRef {
   ) => void;
   getDistance: (start: number[], end: number[]) => number;
   clear: () => void;
+  fit: (points: object[]) => void;
 }
 
 const mapRef2 = ref<MapRef | null>(null);
@@ -122,6 +123,7 @@ function showMarks() {
       [0, -16],
     );
   }
+  mapRef2.value?.fit(allSensors.value);
 }
 
 // 格式化标记点

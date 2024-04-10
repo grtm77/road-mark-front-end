@@ -8,7 +8,7 @@ const datasets = ref([
   {
     id: 1,
     table_name: "default",
-    table_remark: "默认存储空间",
+    table_remark: "数据库可能还未启动或连接失败！",
   },
 ]);
 
