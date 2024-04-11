@@ -21,8 +21,8 @@ const router = createRouter({
           component: () => import("@/views/viewData.vue"),
         },
         {
-          path: "/addCrossing",
-          component: () => import("@/views/addCrossing.vue"),
+          path: "/result",
+          component: () => import("@/views/result.vue"),
         },
       ],
     },

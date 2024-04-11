@@ -21,5 +21,7 @@ export const getDataApi = async (name: any) => {
 };
 
 export const calcApi = async (name: string, algorithm: number) => {
-  return await server.get("/calc?table_name=" + name + "&algorithm=" + algorithm);
+  return await server.get(
+    "/calc?table_name=" + name + "&algorithm=" + algorithm,
+  );
 };

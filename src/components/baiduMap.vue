@@ -77,6 +77,7 @@ function addMarkOnMap(
     offset: offset1,
   });
   map.addOverlay(marker);
+  marker.setTop(true);
 }
 
 // 获取点距离
@@ -87,6 +88,17 @@ function getDistance(start: number[], end: number[]) {
       new BMap.Point(end[0], end[1]),
     )
     .toFixed(10);
+}
+
+// 画覆盖圆
+function addCircle(lng: number, lat: number) {
+  const circle = new BMap.Circle(new BMap.Point(lng, lat), 68, {
+    strokeColor: "blue",
+    strokeWeight: 2,
+    strokeOpacity: 0.5, //圆形的边线透明度
+    strokeStyle: "solid",
+  });
+  map.addOverlay(circle);
 }
 
 // 清除标记
@@ -112,6 +124,7 @@ function mapClick({ point }: any) {
 // 向外暴露方法
 defineExpose({
   addMarkOnMap,
+  addCircle,
   getDistance,
   clear,
   fit,

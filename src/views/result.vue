@@ -4,6 +4,7 @@ import BaiduMap from "@/components/baiduMap.vue";
 import { ElMessage } from "element-plus";
 import { getDataApi } from "@/api/markApi";
 import { useRoute } from "vue-router";
+import { useResponseStore } from "@/stores/response";
 
 // 子组件实例
 interface MapRef {
@@ -16,69 +17,33 @@ interface MapRef {
   getDistance: (start: number[], end: number[]) => number;
   clear: () => void;
   fit: (points: object[]) => void;
+  addCircle: (lng: number, lat: number) => void;
 }
 
 const mapRef2 = ref<MapRef | null>(null);
 
+const store = useResponseStore();
 // 变量
 const allSensors = ref([] as any); //存放地图上所有标记的传感器节点
 const allGateways = ref([] as any); //存放地图上所有标记的网关节点
-const allCrossings = ref([] as any); //存放地图上所有标记的路口节点
+// const allCrossings = ref([] as any); //存放地图上所有标记的路口节点
 
-const route = useRoute();
-
-async function getData() {
-  try {
-    const { data } = await getDataApi(route.query.dataset);
-    if (data.success === true) {
-      allSensors.value = data.data.sensors;
-      allGateways.value = data.data.gateways;
-      allCrossings.value = data.data.crossings;
-      // console.log(allSensors.value)
-    } else {
-      ElMessage({
-        type: "error",
-        message: data.msg,
-      });
-    }
-  } catch (error: any) {
-    ElMessage({
-      type: "error",
-      message: error.message,
-    });
-  }
-}
-
-onBeforeMount(() => {
-  getData();
-});
+// console.log(store.responseData)
 
 watch(
-  () => route.query.dataset,
-  async (d) => {
-    try {
-      const { data } = await getDataApi(route.query.dataset);
-      if (data.success === true) {
-        allSensors.value = data.data.sensors;
-        allGateways.value = data.data.gateways;
-        allCrossings.value = data.data.crossings;
-        showMarks();
-      } else {
-        ElMessage({
-          type: "error",
-          message: data.msg,
-        });
-      }
-    } catch (error: any) {
-      ElMessage({
-        type: "error",
-        message: error.message,
-      });
-    }
+  () => store.responseData,
+  (d) => {
+    allSensors.value = store.responseData.sensors;
+    allGateways.value = store.responseData.gateways;
+    // allCrossings.value = data.data.crossings;
+    console.log(store.responseData);
+    showMarks();
   },
 );
 
 function mapReady() {
+  allSensors.value = store.responseData.sensors;
+  allGateways.value = store.responseData.gateways;
   showMarks();
 }
 
@@ -90,9 +55,9 @@ const SENSOR = "src/components/icons/point.png";
 // 网关图标
 const GATEWAY = "src/components/icons/jian.png";
 // 路口图标
-const CROSSING = "src/components/icons/green.png";
+// const CROSSING = "src/components/icons/green.png";
 
-// 子组件点击地图时触发标注事件
+// 展示标记
 function showMarks() {
   // 清除图上标记
   mapRef2.value?.clear();
@@ -113,22 +78,21 @@ function showMarks() {
       [allGateways.value[j].lng, allGateways.value[j].lat],
       [0, -16],
     );
-  }
-  // 路口
-  for (let j = 0; j < allCrossings.value.length; j++) {
-    mapRef2.value?.addMarkOnMap(
-      CROSSING,
-      [32, 32],
-      [allCrossings.value[j].lng, allCrossings.value[j].lat],
-      [0, -16],
+    mapRef2.value?.addCircle(
+      allGateways.value[j].lng,
+      allGateways.value[j].lat,
     );
   }
+  // 路口
+  // for (let j = 0; j < allCrossings.value.length; j++) {
+  //   mapRef2.value?.addMarkOnMap(
+  //       CROSSING,
+  //       [32, 32],
+  //       [allCrossings.value[j].lng, allCrossings.value[j].lat],
+  //       [0, -16],
+  //   );
+  // }
   mapRef2.value?.fit(allSensors.value);
-}
-
-// 格式化标记点
-function format() {
-  mapRef2.value?.clear();
 }
 </script>
 
@@ -136,8 +100,8 @@ function format() {
   <baidu-map ref="mapRef2" @map-ready="mapReady"></baidu-map>
   <div class="func-area">
     车位:
-    {{ allSensors.length }}个 灯杆: {{ allGateways.length }}个 路口:
-    {{ allCrossings.length }}个
+    {{ allSensors.length }}个 所需网关数: {{ allGateways.length }}个
+    平均网关覆盖车位：{{ allSensors.length / allGateways.length }}个
   </div>
 </template>
 
