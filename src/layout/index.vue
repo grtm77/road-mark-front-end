@@ -74,6 +74,7 @@ async function askForCalc(name: string) {
       message: "正在计算，可能时间较长，请耐心等待，不要重复点击！",
     });
     dataDialog.value = false;
+    store.loading = true;
     const { data } = await calcApi(name, algorithm.value);
     if (data.success === true) {
       ElMessage({

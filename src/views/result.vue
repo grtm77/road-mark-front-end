@@ -93,15 +93,22 @@ function showMarks() {
   //   );
   // }
   mapRef2.value?.fit(allSensors.value);
+  store.loading = false;
 }
 </script>
 
 <template>
-  <baidu-map ref="mapRef2" @map-ready="mapReady"></baidu-map>
+  <baidu-map
+    ref="mapRef2"
+    @map-ready="mapReady"
+    v-loading="store.loading"
+  ></baidu-map>
   <div class="func-area">
     车位:
     {{ allSensors.length }}个 所需网关数: {{ allGateways.length }}个
-    平均网关覆盖车位：{{ (allSensors.length / allGateways.length).toFixed(2) }}个
+    平均网关覆盖车位：{{
+      (allSensors.length / allGateways.length).toFixed(2)
+    }}个
   </div>
 </template>
 
