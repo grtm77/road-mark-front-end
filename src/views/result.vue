@@ -101,7 +101,7 @@ function showMarks() {
   <div class="func-area">
     车位:
     {{ allSensors.length }}个 所需网关数: {{ allGateways.length }}个
-    平均网关覆盖车位：{{ allSensors.length / allGateways.length }}个
+    平均网关覆盖车位：{{ (allSensors.length / allGateways.length).toFixed(2) }}个
   </div>
 </template>
 
