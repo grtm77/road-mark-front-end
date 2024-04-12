@@ -12,6 +12,22 @@ export const addMarksApi = async (
   });
 };
 
+export const addDatasetsApi = async (
+  table_name: string,
+  remark: string,
+  sensors: number[],
+  gateways: number[],
+  crossings: number[],
+) => {
+  return await server.post("/saveDS", {
+    table_name: table_name,
+    remark: remark,
+    sensors: sensors,
+    gateways: gateways,
+    crossings: crossings,
+  });
+};
+
 export const getDatasetsListApi = async () => {
   return await server.get("/loadDatasets");
 };

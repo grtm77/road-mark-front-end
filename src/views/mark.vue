@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import BaiduMap from "@/components/baiduMap.vue";
-import { addMarksApi } from "@/api/markApi";
-import { ElMessage } from "element-plus";
+import { addDatasetsApi, addMarksApi } from "@/api/markApi";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 // 子组件实例
 interface MapRef {
@@ -224,6 +224,40 @@ async function sendData() {
     });
   }
 }
+
+const saveDataDialog = ref(false);
+const table_name = ref("");
+const remarks = ref("");
+async function sendDatasets() {
+  try {
+    const { data } = await addDatasetsApi(
+      table_name.value,
+      remarks.value,
+      allSensors.value,
+      allGateways.value,
+      allCrossings.value,
+    );
+    if (data.success === true) {
+      saveDataDialog.value = false;
+      table_name.value = "";
+      remarks.value = "";
+      ElMessage({
+        type: "success",
+        message: "保存成功",
+      });
+    } else {
+      ElMessage({
+        type: "error",
+        message: data.msg,
+      });
+    }
+  } catch (error: any) {
+    ElMessage({
+      type: "error",
+      message: error.message,
+    });
+  }
+}
 </script>
 
 <template>
@@ -255,7 +289,21 @@ async function sendData() {
     </span>
     <el-button @click="format()">清空</el-button>
     <el-button @click="sendData()">保存数据</el-button>
+    <el-button @click="saveDataDialog = true">保存到数据集</el-button>
   </div>
+  <!--  输入对话框-->
+  <el-dialog v-model="saveDataDialog" width="500">
+    <span>请输入数据库表名：</span>
+    <el-input v-model="table_name" style="width: 240px"></el-input><br /><br />
+    <span>请输入数据集备注：</span>
+    <el-input v-model="remarks" style="width: 240px"></el-input>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="saveDataDialog = false">取消</el-button>
+        <el-button type="primary" @click="sendDatasets()"> 提交 </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style>
