@@ -50,6 +50,10 @@ const gotoPage = (key: string, keyPath: string[]) => {
       router.push("/addCrossing");
       return;
     }
+    case "4": {
+      router.push("/settings");
+      return;
+    }
   }
 };
 
@@ -69,6 +73,7 @@ async function askForCalc(name: string) {
       type: "warning",
       message: "正在计算，可能时间较长，请耐心等待，不要重复点击！",
     });
+    dataDialog.value = false;
     const { data } = await calcApi(name, algorithm.value);
     if (data.success === true) {
       ElMessage({
@@ -76,7 +81,6 @@ async function askForCalc(name: string) {
         message: "计算成功！",
       });
       store.responseData = data.data;
-      dataDialog.value = false;
       await router.push("/result");
     } else {
       ElMessage({
@@ -118,15 +122,15 @@ async function askForCalc(name: string) {
               <el-menu-item index="2-1" @click="openDialog(1)"
                 >朴素贪心</el-menu-item
               >
-              <el-menu-item index="2-2" @click="openDialog(2)"
-                >定向贪心</el-menu-item
-              >
+              <!--              <el-menu-item index="2-2" @click="openDialog(2)"-->
+              <!--                >定向贪心</el-menu-item-->
+              <!--              >-->
               <el-menu-item index="2-3" @click="openDialog(3)"
                 >线性规划</el-menu-item
               >
-              <el-menu-item index="2-4" @click="openDialog(4)"
-                >蚁群算法</el-menu-item
-              >
+              <!--              <el-menu-item index="2-4" @click="openDialog(4)"-->
+              <!--                >蚁群算法</el-menu-item-->
+              <!--              >-->
               <el-menu-item index="2-5" @click="openDialog(5)"
                 >遗传算法</el-menu-item
               >
@@ -153,6 +157,12 @@ async function askForCalc(name: string) {
                 >{{ d.table_remark }}
               </el-menu-item>
             </el-sub-menu>
+            <el-menu-item index="4">
+              <template #title>
+                <el-icon><Setting /></el-icon>
+                数据集管理
+              </template>
+            </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>
@@ -197,7 +207,7 @@ async function askForCalc(name: string) {
 }
 
 .el-aside {
-  //background-color: #256eb4;
+  //background-color: #eaeaea;
   position: fixed;
   top: 0;
   left: 0;
@@ -217,7 +227,7 @@ async function askForCalc(name: string) {
   bottom: 0;
   font-size: 40px;
   padding: 0;
-  //background-color: #2c3e50;
+  //background-color: #eaeaea;
 }
 
 .my-header {

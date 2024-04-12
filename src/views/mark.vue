@@ -306,7 +306,7 @@ async function sendDatasets() {
   </el-dialog>
 </template>
 
-<style>
+<style scoped>
 .func-area {
   display: flex;
   align-items: center;

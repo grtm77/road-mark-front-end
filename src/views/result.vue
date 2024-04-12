@@ -105,7 +105,7 @@ function showMarks() {
   </div>
 </template>
 
-<style>
+<style scoped>
 .func-area {
   display: flex;
   align-items: center;

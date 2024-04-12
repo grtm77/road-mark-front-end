@@ -41,3 +41,7 @@ export const calcApi = async (name: string, algorithm: number) => {
     "/calc?table_name=" + name + "&algorithm=" + algorithm,
   );
 };
+
+export const deleteApi = async (id: number) => {
+  return await server.delete("/delete?id=" + id);
+};
